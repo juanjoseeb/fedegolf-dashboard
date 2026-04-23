@@ -1,0 +1,359 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-main:     #071a07;
+  --bg-card:     #0d1f0d;
+  --bg-card-alt: #071407;
+  --border:      #1a3a1a;
+  --gold:        #d4af37;
+  --gold-dark:   #b8932a;
+  --gold-dim:    #d4af3722;
+  --text:        #e8f2e8;
+  --text-sec:    #8aaa8a;
+  --text-muted:  #4a6a4a;
+  --hover-row:   #0f2b0f;
+  --selected-row:#162b06;
+  --score-bg:    #162b06;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg-main);
+  color: var(--text);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse at 20% 0%, #0d2d0d 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 100%, #071a07 0%, transparent 50%);
+}
+
+.app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 16px;
+}
+
+/* ─── Header ─────────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 36px;
+}
+.header-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+  margin-top: 2px;
+  filter: drop-shadow(0 0 8px #d4af3755);
+}
+.header-text { display: flex; flex-direction: column; gap: 3px; }
+.header h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+.header-sub {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.header-badge {
+  background: var(--gold);
+  color: var(--bg-main);
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+  align-self: flex-start;
+}
+
+/* ─── Search form ─────────────────────────────────────────────── */
+.search-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.search-form input {
+  flex: 1;
+  min-width: 200px;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.search-form input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-dim);
+}
+.search-form input::placeholder { color: var(--text-muted); }
+.search-form button {
+  padding: 12px 28px;
+  background: var(--gold);
+  color: var(--bg-main);
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+}
+.search-form button:hover {
+  background: var(--gold-dark);
+  box-shadow: 0 2px 12px #d4af3744;
+}
+.search-form button:disabled {
+  background: #1a3010;
+  color: #3a6030;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ─── Fallback toggle ─────────────────────────────────────────── */
+.fallback-toggle {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-bottom: 28px;
+  display: block;
+}
+
+/* ─── Spinner ─────────────────────────────────────────────────── */
+.spinner-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 60px 0;
+  color: var(--text-muted);
+}
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── Error ───────────────────────────────────────────────────── */
+.error-box {
+  background: #2a0d0d;
+  border: 1px solid #7a2020;
+  border-radius: 8px;
+  padding: 16px 20px;
+  color: #e74c3c;
+  margin-bottom: 20px;
+}
+
+/* ─── Stat cards ──────────────────────────────────────────────── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold) 0%, transparent 100%);
+  opacity: 0.6;
+}
+.stat-card .icon {
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+  display: block;
+  opacity: 0.85;
+}
+.stat-card .label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 6px;
+}
+.stat-card .value {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+.stat-card .sub {
+  font-size: 0.78rem;
+  color: var(--text-sec);
+  margin-top: 6px;
+}
+
+/* ─── Section title ───────────────────────────────────────────── */
+.section-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border) 0%, transparent 100%);
+}
+
+/* ─── Chart wrapper ───────────────────────────────────────────── */
+.chart-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px 8px 12px;
+  margin-bottom: 32px;
+}
+
+/* ─── Round table ─────────────────────────────────────────────── */
+.round-table-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+.round-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.round-table th {
+  background: var(--bg-card-alt);
+  padding: 11px 16px;
+  text-align: left;
+  font-size: 0.68rem;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+.round-table th:hover { color: var(--text); }
+.round-table td {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+  color: var(--text);
+}
+.round-table tr { cursor: pointer; transition: background 0.12s; }
+.round-table tr:hover td { background: var(--hover-row); }
+.round-table tr.selected td { background: var(--selected-row); }
+.badge-score {
+  display: inline-block;
+  background: var(--score-bg);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 2px 9px;
+  font-weight: 700;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+/* ─── Scorecard panel ─────────────────────────────────────────── */
+.scorecard-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+}
+.scorecard-panel h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1rem;
+  color: var(--text-sec);
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+/* ─── Tab bar ─────────────────────────────────────────────────── */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--border);
+}
+.tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 10px 22px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  margin-bottom: -1px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.tab:hover { color: var(--text-sec); }
+.tab--active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* ─── Footer ──────────────────────────────────────────────────── */
+.app-footer {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  margin-top: 64px;
+  padding-bottom: 28px;
+  letter-spacing: 0.06em;
+}
+.app-footer::before {
+  content: '⛳ ';
+  opacity: 0.6;
+}
+
+/* ─── Hole chart legend ───────────────────────────────────────── */
+.hole-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+.hole-legend span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: var(--text-sec);
+}
+.hole-legend .dot {
+  width: 10px; height: 10px;
+  border-radius: 2px;
+}
