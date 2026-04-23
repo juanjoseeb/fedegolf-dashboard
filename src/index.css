@@ -301,6 +301,36 @@ body {
   font-weight: 700;
 }
 
+/* ─── Player card ────────────────────────────────────────────── */
+.player-card {
+  background: var(--bg-card);
+  border: 1px solid var(--gold);
+  border-radius: 14px;
+  padding: 20px 28px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+.player-card__name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.02em;
+  margin-bottom: 8px;
+}
+.player-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: var(--text-sec);
+}
+.player-card__hcp strong {
+  color: var(--text);
+  font-size: 1rem;
+}
+
 /* ─── Tab bar ─────────────────────────────────────────────────── */
 .tab-bar {
   display: flex;

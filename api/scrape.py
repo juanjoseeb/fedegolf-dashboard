@@ -21,7 +21,8 @@ HEADERS = {
 }
 
 
-def get_salesforce_id(codigo: str) -> str:
+def get_player_info(codigo: str) -> dict:
+    """Returns Salesforce ID plus player profile scraped from the AJAX response."""
     session = requests.Session()
     session.headers.update(HEADERS)
     session.get("https://federacioncolombianadegolf.com/handicap/", timeout=15)
@@ -54,7 +55,16 @@ def get_salesforce_id(codigo: str) -> str:
     if not persona or not persona.get("Id"):
         raise ValueError(f"Player data missing Salesforce ID for código {codigo}.")
 
-    return persona["Id"]
+    first = persona.get("FirstName", "")
+    last = persona.get("LastName", "")
+    return {
+        "salesforce_id": persona["Id"],
+        "name": f"{first} {last}".strip(),
+        "club": persona.get("FCG_Club_Federado__c", ""),
+        "handicap_index": persona.get("Indice__c"),
+        "category": persona.get("Categoria__c", ""),
+        "codigo": persona.get("CodigoJugador__c", codigo),
+    }
 
 
 def get_rounds(salesforce_id: str) -> list:
@@ -312,10 +322,12 @@ class handler(BaseHTTPRequestHandler):
                 self._write(get_scorecard(round_id))
                 return
 
+            player = None
             if sf_id_param:
                 salesforce_id = sf_id_param
             elif code:
-                salesforce_id = get_salesforce_id(code)
+                player = get_player_info(code)
+                salesforce_id = player["salesforce_id"]
             else:
                 self._write({"error": "Missing ?code= or ?sf_id= parameter"})
                 return
@@ -323,7 +335,6 @@ class handler(BaseHTTPRequestHandler):
             rounds = get_rounds(salesforce_id)
 
             if full:
-                # Fetch all 18-hole scorecards in parallel (max 5 concurrent)
                 scorecards = {}
                 with ThreadPoolExecutor(max_workers=5) as executor:
                     futures = [executor.submit(_fetch_scorecard_safe, r) for r in rounds]
@@ -333,9 +344,9 @@ class handler(BaseHTTPRequestHandler):
                             scorecards[rid] = sc
 
                 analytics = compute_analytics(rounds, scorecards)
-                self._write({"salesforce_id": salesforce_id, "rounds": rounds, "analytics": analytics})
+                self._write({"salesforce_id": salesforce_id, "player": player, "rounds": rounds, "analytics": analytics})
             else:
-                self._write({"salesforce_id": salesforce_id, "rounds": rounds})
+                self._write({"salesforce_id": salesforce_id, "player": player, "rounds": rounds})
 
         except requests.Timeout:
             self._write({"error": "Request timed out. The federation site may be slow."})
@@ -357,10 +368,11 @@ class handler(BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     test_code = sys.argv[1] if len(sys.argv) > 1 else "31888"
-    print(f"Resolving Salesforce ID for código: {test_code}")
+    print(f"Resolving player info for código: {test_code}")
     try:
-        sf_id = get_salesforce_id(test_code)
-        print(f"Salesforce ID: {sf_id}")
+        player = get_player_info(test_code)
+        sf_id = player["salesforce_id"]
+        print(f"Player: {player}")
         rounds = get_rounds(sf_id)
         print(f"Found {len(rounds)} rounds")
         for r in rounds[:2]:

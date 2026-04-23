@@ -87,6 +87,21 @@ export default function App() {
 
       {data && (
         <>
+          {data.player && (
+            <div className="player-card">
+              <div className="player-card__name">{data.player.name}</div>
+              <div className="player-card__meta">
+                {data.player.club && <span>{data.player.club}</span>}
+                {data.player.handicap_index != null && (
+                  <span className="player-card__hcp">
+                    Índice <strong>{data.player.handicap_index}</strong>
+                  </span>
+                )}
+                {data.player.category && <span>{data.player.category}</span>}
+              </div>
+            </div>
+          )}
+
           <div className="tab-bar">
             <button
               className={`tab${activeTab === "dashboard" ? " tab--active" : ""}`}
